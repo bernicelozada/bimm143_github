@@ -1,0 +1,6 @@
+---
+title: "Class 6: R functions"
+author: "Bernice Lozada (PID: A16297973)
+format: html
+---
+

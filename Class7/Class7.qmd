@@ -1,0 +1,219 @@
+---
+title: "Class 7: Machine Learning 1"
+author: "Bernice Lozada (A16297973)"
+format: pdf
+---
+
+Today we will start our multi-part exploratoin of some key machine learning methods. We will begin with clustering - finding groupings in data, and then dimensionality reduction.
+
+## Clustering
+Let's start with "k-means" clustering.
+
+The main function in base R for this is `kmeans()`.
+
+```{r}
+# Make up some data
+# Make two separated clusters of data
+tmp <- c(rnorm(30,-3), rnorm(30,+3))
+x <- cbind(x = tmp, y = rev(tmp))
+plot(x)
+```
+
+Trying out `kmeans()`
+```{r}
+# 2 clusters, centers = 2 
+km <- kmeans(x, centers = 2)
+km
+```
+> Q. How many points in each cluster?
+
+```{r}
+km$size
+```
+
+> Q. What component of your result object details cluster assignment/membership?
+
+```{r}
+#cluster
+km$cluster
+
+```
+
+
+> Q. What are centers/mean values of each cluster?
+
+```{r}
+km$centers
+```
+
+
+> Q. Make a plot of your data showing your clustering results (groupings/clusters and cluster centers)
+
+```{r}
+
+# color by cluster membership
+plot(x, col = km$cluster+5)
+points(km$centers, col="blue", pch = 8, cex = 3)
+```
+
+> Q. Run `kmeans()` again and cluster in 4 groups and plot the results.
+
+```{r}
+km <- kmeans(x, centers = 4)
+# color by cluster membership
+plot(x, col = km$cluster+3)
+points(km$centers, col="purple", pch = 8, cex = 2)
+
+```
+
+Biased because the results depend on the number of clusters you specify.
+
+## Hierarchal Clustering
+
+This form of clustering aims to reveal the structure in your data by progressively grouping points into an ever smaller number of clusters. Start with every point with its own clusters --> smaller number. 
+
+The main function in base R for this is called `hclust()`. This function does not take our input data directly but wants a "distance matrix" that details how (dis)similar all our inputs are to each other.
+
+```{r}
+hc <- hclust(dist(x))
+hc
+```
+
+The print out above is not very useful, but there is a useful `plot()` method.
+
+```{r}
+plot(hc)
+```
+Height of crossbar (horizontal line) indicates how far the points on the goalposts are. 
+
+To get my main result (my cluster membership vector), I need to "cut" my tree using the function `cutree()`
+
+```{r}
+grps <- cutree(hc, h = 6)
+grps
+```
+
+```{r}
+plot(x, col = grps+5)
+
+```
+
+
+# Principal Component Analysis
+
+The goal of PCA is to reduce the dimensionality of a dataset down to some smaller subset of new variables (called PCs) that are useful bases for further analysis, like visualization, clustering, etc.
+
+```{r}
+url <- "https://tinyurl.com/UK-foods"
+x <- read.csv(url, row.names = 1)
+
+View(x)
+```
+
+> Q1. How many rows and columns are in your new data frame named x? What R functions could you use to answer this questions?
+
+I could use `nrow()` and `ncol()` to determine the number of rows and columns, respectively.
+
+> Q2. Which approach to solving the ‘row-names problem’ mentioned above do you prefer and why? Is one approach more robust than another under certain circumstances?
+
+I would prefer setting row.names = 1, as it requires only running line of code to change the name of the entire data set rather than rerunning the code. 
+
+```{r}
+barplot(as.matrix(x), beside = T, col = rainbow(nrow(x)))
+```
+
+> Q3: Changing what optional argument in the above barplot() function results in the following plot?
+
+Remove the beside = T argument/setting it equal to F would result in the plot on the website.
+
+
+The so-called "pairs" plot can be useful for small datasets:
+
+```{r}
+
+pairs(x, col=rainbow(10), pch=16)
+
+```
+
+> Q5: Generating all pairwise plots may help somewhat. Can you make sense of the following code and resulting figure? What does it mean if a given point lies on the diagonal for a given plot?
+
+The code leads to a pairwise graphing on different countries against each other.  The position of the words indicate which country is on which axes for a given plot (e.g. in the same row means that country is on y-axis, in the same column means it's on the x-axis). A point on the diagonal for a given plot means that the value for that point between the two countries in the plot are very similar. 
+
+Pairs plot is useful for small datasets, but can be lots of work to interpret and gets intractable for larger datasets --> USE PCA
+
+The main function to do PCA in base R is `prcomp()`
+
+```{r}
+# t(x) so the variables are cols and observations are rows
+
+pca <- prcomp(t(x))
+summary(pca)
+
+```
+```{r}
+pca$x
+```
+A major PCA result visualization is called a "PCA plot" (aka a score plot, biplot, PC1 vs PC2 plot, ordination plot)
+
+```{r}
+mycols <- c("orange","red","blue","darkgreen")
+plot(pca$x[,1],pca$x[,2], col = mycols, pch = 16, xlab = "PC1",
+     ylab = "PC2")
+abline(h=0, col="gray")
+abline(v=0, col="gray")
+```
+Another output from PCA is called the "loadings" vector or that "rotation" component - this tells us how much the original variables (the foods in this case) contribute to the new PCs.
+
+```{r}
+pca$rotation
+```
+
+PCA looks to be a super useful method for gaining some insight into high dimensional data that is difficult to examine n other ways.
+
+## PCA of RNA-Seq Data
+
+## Data input
+```{r}
+url2 <- "https://tinyurl.com/expression-CSV"
+rna.data <- read.csv(url2, row.names=1)
+head(rna.data)
+```
+```{r}
+## Again we have to take the transpose of our data 
+pca <- prcomp(t(rna.data), scale=TRUE)
+ 
+## Simple un polished plot of pc1 and pc2
+plot(pca$x[,1], pca$x[,2], xlab="PC1", ylab="PC2")
+
+summary(pca)
+```
+> Q. How many genes and samples are in this dataset?
+
+```{r}
+nrow(rna.data)
+```
+
+```{r}
+attributes(pca)
+
+pca$x
+```
+I will make a main result figure using ggplot:
+
+```{r}
+library(ggplot2)
+#rep - repeats value
+mycols <- c(rep("blue", 5), rep("red",5))
+  
+# change pca$x into data frame
+res <- as.data.frame(pca$x)
+
+# make ggplot
+ggplot(res) + aes(x=PC1, y = PC2) + geom_point(col = mycols)
+
+ggplot(res) + aes(x=PC1, y = PC2, col = row.names(res)) + geom_point()
+
+# cluster based on PCA analysis
+kmeans(pca$x[,1], centers=2)
+```
+
