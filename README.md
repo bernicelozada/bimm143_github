@@ -9,4 +9,5 @@ My classwork for [BIMM 143 SP24](https://bioboot.github.io/bimm143_S24/) at UC S
 - **Class 10** [Structural Bioinformatics](https://github.com/bernicelozada/bimm143_github/blob/20469ad1ceb6c730312efc6b3c001948aa056546/Class10/Lab10.md)
 - **Class 13** [Transcriptomics and the analysis of RNA-Seq data](https://github.com/bernicelozada/bimm143_github/blob/1d66a171d169b45bdb69bd78754a1b52eba8b7d3/Class13/Lab13.md)
 - **Class 14** [RNA Seq Mini-Project](https://github.com/bernicelozada/bimm143_github/blob/629d81f40c1995c8dc4404abab0ca68c4b924109/Class14/Class14.md)
+- **Class 18** [Pertussis Mini-Project](https://github.com/bernicelozada/bimm143_github/blob/e807fd7a7f059e5be12d619fbc8a85d4d8ef8002/Lab%2018%3A%20Pertussis%20Mini-Project/class18.md)
   
