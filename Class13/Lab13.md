@@ -1,4 +1,4 @@
-# Lab 13
+# Lab 13: Transcriptomics and the analysis of RNA-Seq data
 Bernice Lozada (A16297973)
 
 ``` r
