@@ -1,4 +1,4 @@
-# bimm143_github
+# Introductory Bioinformatics Labwork
 My classwork for BIMM 143 SP24 at UC San Diego.
 
 - Class 5 [Data visualization with ggplot](https://github.com/bernicelozada/bimm143_github/blob/main/class%205/Class05.pdf)
